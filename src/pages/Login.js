@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import uri from "@/config/uri";
 import ClipLoader from "react-spinners/ClipLoader";
-import axios from "axios";
+import { authLogin } from "@/utils/ApiServices";
+import { storeData } from "@/utils/StorageServices";
 
 const Login = () => {
   let history = useHistory();
@@ -17,20 +17,17 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    axios
-      .post(`${uri}/auth/login`, user)
-      .then((response) => {
+    authLogin(user)
+      .then((res) => {
+        console.log(res);
+        storeData("access_token", res.access_token);
         setLoading(false);
-        window.sessionStorage.setItem(
-          "access_token",
-          response.data.data.access_token
-        );
         history.push("/");
       })
       .catch((err) => {
-        setFailed(true);
+        console.log(err);
         setLoading(false);
-        console.log(err.response);
+        setFailed(true);
       });
   };
 

@@ -1,11 +1,10 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Pagination from "./pagination/Pagination";
 import { BiTrash } from "react-icons/bi";
 import { AiTwotoneEye } from "react-icons/ai";
 import Search from "./search/Search";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
-import uri from "@/config/uri";
+import { deleteData, fetchDatas } from "@/utils/ApiServices";
 
 const Table = (props) => {
   let history = useHistory();
@@ -16,33 +15,48 @@ const Table = (props) => {
   const [namaItem, setNamaItem] = useState("");
   const [activeItem, setActiveItem] = useState();
   const [deleteModal, setDeleteModal] = useState(false);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDatas(props.path)
+      .then((res) => {
+        console.log(res);
+        setData(res);
+        setLoading(false);
+      })
+      .catch((err) => console.log(err));
+  }, [props.path]);
 
   const ITEMS_PER_PAGE = 20;
 
   const headerLength = props.header.length;
 
   const handleDelete = () => {
-    axios
-      .delete(`${uri}/${props.uri}/${activeItem}`, {
-        headers: {
-          Authorization:
-            "Bearer " + window.sessionStorage.getItem("access_token"),
-        },
-      })
-      .then((response) => {
+    deleteData(props.path, activeItem)
+      .then((res) => {
+        console.log(res);
+        fetchDatas(props.path)
+          .then((res) => {
+            console.log(res);
+            setData(res);
+            setLoading(false);
+          })
+          .catch((err) => console.log(err));
         setDeleteModal(false);
-        history.go(0);
       })
       .catch((err) => {
-        console.log(err.response);
+        console.log(err);
       });
   };
 
   const tableData = useMemo(() => {
-    let computedData = Array.from(props.data);
+    let computedData = Array.from(data);
     if (search) {
-      computedData = computedData.filter((data) =>
-        data.no_rm.toString().includes(search)
+      computedData = computedData.filter(
+        (data) =>
+          data.nama.toLowerCase().indexOf(search.toLowerCase()) > -1 ||
+          (data.no_rm !== undefined && data.no_rm.toString().includes(search))
       );
     }
 
@@ -52,7 +66,7 @@ const Table = (props) => {
       (currentPage - 1) * ITEMS_PER_PAGE,
       (currentPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
     );
-  }, [props.data, search, currentPage]);
+  }, [data, search, currentPage]);
 
   const colData = (data, header, show, key) => {
     let final = [];
@@ -72,7 +86,7 @@ const Table = (props) => {
                   type="button"
                   className="focus:outline-none text-white text-sm p-2 bg-green-500 rounded-l-md hover:bg-green-600 hover:shadow-lg"
                   onClick={() => {
-                    history.push(`${props.toEdit}/${data.id}`);
+                    history.push(`${props.url}/ubah/${data.id}`);
                   }}
                 >
                   <AiTwotoneEye />
@@ -137,14 +151,14 @@ const Table = (props) => {
         <button
           className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg"
           onClick={() => {
-            history.push(props.toAdd);
+            history.push(`${props.url}/tambah`);
           }}
         >
           Tambah
         </button>
       </div>
 
-      {!props.loading && (
+      {!loading && (
         <>
           <table className="w-full">
             <thead className="bg-gray-100 text-base select-none ">

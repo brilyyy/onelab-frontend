@@ -8,6 +8,7 @@ const SidebarLink = (props) => {
       to={props.to}
       activeClassName="bg-blue-900"
       className="text-white cursor-pointer flex px-3 py-4 hover:bg-blue-600 hover:shadow-md"
+      onClick={props.onClick}
     >
       {props.title}
     </NavLink>

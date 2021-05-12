@@ -1,35 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BiToggleRight, BiToggleLeft } from "react-icons/bi";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import { authMe, authLogout } from "@/utils/ApiServices";
+import { clearData } from "@/utils/StorageServices";
 import SidebarLink from "@/components/SidebarLink";
-import Home from "./home/Home";
-import DaftarPasien from "./daftar-pasien/DaftarPasien";
-import axios from "axios";
-import uri from "@/config/uri";
+import DashboardRoute from "@/routes/DashboardRoute";
 
 const Dashboard = () => {
   const [open, setOpen] = useState(false);
-  const logout = () => {
-    axios
-      .post(
-        uri + "/auth/logout",
-        {},
-        {
-          headers: {
-            Authorization:
-              "Bearer " + window.sessionStorage.getItem("access_token"),
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response);
-        window.sessionStorage.removeItem("access_token");
-        window.location.reload();
+  const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    authMe()
+      .then((res) => {
+        console.log(res);
+        setUsername(res.name);
+        setLoading(false);
       })
       .catch((err) => {
-        console.log(err.response);
+        console.log(err);
       });
+  }, []);
+
+  const logout = () => {
+    authLogout().then((res) => {
+      clearData();
+      window.location.reload();
+    });
   };
   return (
     <Router>
@@ -57,12 +56,16 @@ const Dashboard = () => {
                   <FaUserCircle />
                 </span>
               </div>
-              <span>Username</span>
+              <span>{!loading && username}</span>
             </div>
 
             {/* Links */}
-            <SidebarLink to="/" title="Home" />
-            <SidebarLink to="/daftar-pasien" title="Daftar Pasien" />
+            <SidebarLink to="/" title="Home" onClick={() => setOpen(!open)} />
+            <SidebarLink
+              to="/daftar-pasien"
+              title="Daftar Pasien"
+              onClick={() => setOpen(!open)}
+            />
             <button
               className="text-white cursor-pointer flex px-3 py-4 hover:bg-blue-600 hover:shadow-md w-full focus:outline-none"
               onClick={logout}
@@ -72,10 +75,7 @@ const Dashboard = () => {
           </div>
         </aside>
         <main>
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/daftar-pasien" component={DaftarPasien} />
-          </Switch>
+          <DashboardRoute />
         </main>
       </div>
     </Router>
