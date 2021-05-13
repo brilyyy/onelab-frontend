@@ -1,5 +1,5 @@
 import React from "react";
-import HeaderBar from "@/components/HeaderBar";
+import HeaderBar from "@/components/navigation/HeaderBar";
 import logo from "@/img/logo.png";
 
 const Home = () => {

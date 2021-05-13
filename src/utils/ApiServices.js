@@ -102,7 +102,7 @@ const showData = (path, id) => {
 const updateData = (path, data, id) => {
   return new Promise((resolve, reject) => {
     axios
-      .post(`${uri}/${path}/${id}`, data, {
+      .put(`${uri}/${path}/${id}`, data, {
         headers: {
           Authorization: `Bearer ${getData("access_token")}`,
         },

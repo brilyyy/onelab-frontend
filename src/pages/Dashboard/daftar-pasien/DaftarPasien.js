@@ -1,5 +1,5 @@
 import React from "react";
-import HeaderBar from "@/components/HeaderBar";
+import HeaderBar from "@/components/navigation/HeaderBar";
 import Table from "@/components/table/Table";
 
 const tableHeader = [
@@ -16,7 +16,7 @@ const DaftarPasien = () => {
   return (
     <div className="min-h-screen bg-yellow-400 pb-8">
       <HeaderBar>Daftar Pasien</HeaderBar>
-      <div className="mx-4 my-2 p-3 bg-gray-200 rounded-lg">
+      <div className="mx-4 my-2 p-3 bg-gray-50 rounded-lg">
         <Table
           header={tableHeader}
           cols={cols}

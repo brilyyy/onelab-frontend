@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Pagination from "./pagination/Pagination";
-import { BiTrash } from "react-icons/bi";
+import { BiPencil, BiTrash } from "react-icons/bi";
 import { AiTwotoneEye } from "react-icons/ai";
 import Search from "./search/Search";
 import { useHistory } from "react-router-dom";
-import { deleteData, fetchDatas } from "@/utils/ApiServices";
+import { deleteData, fetchDatas, showData } from "@/utils/ApiServices";
 
-const Table = (props) => {
+const Table = ({ header, cols, url, path, child, id, ...props }) => {
   let history = useHistory();
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,24 +19,40 @@ const Table = (props) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDatas(props.path)
-      .then((res) => {
-        console.log(res);
-        setData(res);
-        setLoading(false);
-      })
-      .catch((err) => console.log(err));
-  }, [props.path]);
+    let isSubscribed = true;
+    child
+      ? showData(path, id).then((res) => {
+          console.log(res);
+          if (isSubscribed) {
+            setData(res[0][child]);
+            setLoading(false);
+          }
+        })
+      : fetchDatas(path)
+          .then((res) => {
+            console.log(res);
+            if (isSubscribed) {
+              setData(res);
+              setLoading(false);
+            }
+          })
+          .catch((err) => console.log(err));
+
+    return () => {
+      isSubscribed = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const ITEMS_PER_PAGE = 20;
 
-  const headerLength = props.header.length;
+  const headerLength = header.length;
 
   const handleDelete = () => {
-    deleteData(props.path, activeItem)
+    deleteData(child ? child : path, activeItem)
       .then((res) => {
         console.log(res);
-        fetchDatas(props.path)
+        fetchDatas(path)
           .then((res) => {
             console.log(res);
             setData(res);
@@ -86,10 +102,23 @@ const Table = (props) => {
                   type="button"
                   className="focus:outline-none text-white text-sm p-2 bg-green-500 rounded-l-md hover:bg-green-600 hover:shadow-lg"
                   onClick={() => {
-                    history.push(`${props.url}/ubah/${data.id}`);
+                    child
+                      ? history.push(`${id}/${url}/lihat/${data.id}`)
+                      : history.push(`${url}/lihat/${data.id}`);
                   }}
                 >
                   <AiTwotoneEye />
+                </button>
+                <button
+                  type="button"
+                  className="focus:outline-none text-white text-sm p-2 bg-yellow-500 hover:bg-yellow-600 hover:shadow-lg"
+                  onClick={() => {
+                    child
+                      ? history.push(`${id}/${url}/ubah/${data.id}`)
+                      : history.push(`${url}/ubah/${data.id}`);
+                  }}
+                >
+                  <BiPencil />
                 </button>
                 <button
                   type="button"
@@ -151,7 +180,9 @@ const Table = (props) => {
         <button
           className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg"
           onClick={() => {
-            history.push(`${props.url}/tambah`);
+            child
+              ? history.push(`${id}/${url}/tambah/`)
+              : history.push(`${url}/tambah`);
           }}
         >
           Tambah
@@ -163,7 +194,7 @@ const Table = (props) => {
           <table className="w-full">
             <thead className="bg-gray-100 text-base select-none ">
               <tr>
-                {props.header.map((header, key) => (
+                {header.map((header, key) => (
                   <th
                     key={key}
                     className="border border-gray-300 px-2 py-1 font-medium text-sm"
@@ -178,10 +209,10 @@ const Table = (props) => {
               {tableData.length !== 0 ? (
                 tableData.map((village, key) => (
                   <tr
-                    className="text-center h-11 select-none cursor-pointer hover:bg-gray-50 text-sm"
+                    className="text-center h-11 select-none cursor-pointer hover:bg-gray-100 text-sm"
                     key={key}
                   >
-                    {colData(village, props.header, props.cols, key)}
+                    {colData(village, header, cols, key)}
                   </tr>
                 ))
               ) : (

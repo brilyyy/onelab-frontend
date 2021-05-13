@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { authMe, authLogout } from "@/utils/ApiServices";
 import { clearData } from "@/utils/StorageServices";
-import SidebarLink from "@/components/SidebarLink";
+import SidebarLink from "@/components/navigation/SidebarLink";
 import DashboardRoute from "@/routes/DashboardRoute";
 
 const Dashboard = () => {
@@ -13,15 +13,21 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isSubscribed = true;
     authMe()
       .then((res) => {
         console.log(res);
-        setUsername(res.name);
-        setLoading(false);
+        if (isSubscribed) {
+          setUsername(res.name);
+          setLoading(false);
+        }
       })
       .catch((err) => {
         console.log(err);
       });
+    return () => {
+      isSubscribed = false;
+    };
   }, []);
 
   const logout = () => {
@@ -33,6 +39,9 @@ const Dashboard = () => {
   return (
     <Router>
       <div className="overflow-x-hidden">
+        {open && (
+          <div className="fixed inset-0 bg-gray-800 h-full opacity-75 transition-opacity"></div>
+        )}
         <aside className="fixed z-50">
           <button
             onClick={() => setOpen(!open)}
@@ -64,6 +73,11 @@ const Dashboard = () => {
             <SidebarLink
               to="/daftar-pasien"
               title="Daftar Pasien"
+              onClick={() => setOpen(!open)}
+            />
+            <SidebarLink
+              to="/daftar-tes"
+              title="Daftar Tes"
               onClick={() => setOpen(!open)}
             />
             <button
