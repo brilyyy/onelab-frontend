@@ -157,7 +157,7 @@ const DetailPasien = (props) => {
             disabled={disabled}
           />
           <FormInput
-            label="Kabupaten"
+            label="Kabupaten/Kota"
             name="kabupaten"
             type="text"
             required={true}

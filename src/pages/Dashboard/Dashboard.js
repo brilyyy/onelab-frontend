@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BiToggleRight, BiToggleLeft } from "react-icons/bi";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, useHistory } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { authMe, authLogout } from "@/utils/ApiServices";
 import { clearData } from "@/utils/StorageServices";
@@ -8,6 +8,7 @@ import SidebarLink from "@/components/navigation/SidebarLink";
 import DashboardRoute from "@/routes/DashboardRoute";
 
 const Dashboard = () => {
+  let history = useHistory();
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(true);
@@ -33,9 +34,10 @@ const Dashboard = () => {
   const logout = () => {
     authLogout().then((res) => {
       clearData();
-      window.location.reload();
+      history.replace("/login");
     });
   };
+
   return (
     <Router>
       <div className="overflow-x-hidden">
@@ -72,12 +74,17 @@ const Dashboard = () => {
             <SidebarLink to="/" title="Home" onClick={() => setOpen(!open)} />
             <SidebarLink
               to="/daftar-pasien"
-              title="Daftar Pasien"
+              title="Data Pasien"
               onClick={() => setOpen(!open)}
             />
             <SidebarLink
               to="/daftar-tes"
-              title="Daftar Tes"
+              title="Daftar Pemeriksaan"
+              onClick={() => setOpen(!open)}
+            />
+            <SidebarLink
+              to="/hasil-pemeriksaan"
+              title="Hasil Pemeriksaan"
               onClick={() => setOpen(!open)}
             />
             <button

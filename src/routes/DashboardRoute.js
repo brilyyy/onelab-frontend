@@ -3,6 +3,7 @@ import DetailPasien from "@/pages/Dashboard/daftar-pasien/detail-pasien/DetailPa
 import DaftarTes from "@/pages/Dashboard/daftar-tes/DaftarTes";
 import DetailPemeriksaan from "@/pages/Dashboard/daftar-tes/detail-pemeriksaan/DetailPemeriksaan";
 import DetailTes from "@/pages/Dashboard/daftar-tes/detail-tes/DetailTes";
+import HasilPemeriksaan from "@/pages/Dashboard/hasil-pemeriksaan/HasilPemeriksaan";
 import Home from "@/pages/Dashboard/home/Home";
 import React from "react";
 import { Route, Switch } from "react-router-dom";
@@ -59,6 +60,7 @@ const DashboardRoute = () => {
           path="/daftar-tes/lihat/:parent/detail/ubah/:id"
           component={() => <DetailPemeriksaan title="edit" />}
         />
+        <Route exact path="/hasil-pemeriksaan" component={HasilPemeriksaan} />
       </Switch>
     </>
   );

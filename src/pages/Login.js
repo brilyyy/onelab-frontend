@@ -22,7 +22,7 @@ const Login = () => {
         console.log(res);
         storeData("access_token", res.access_token);
         setLoading(false);
-        history.push("/");
+        history.replace("/");
       })
       .catch((err) => {
         console.log(err);
