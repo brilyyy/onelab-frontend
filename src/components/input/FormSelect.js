@@ -1,5 +1,5 @@
 import { fetchDatas } from "@/utils/ApiServices";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const FormSelect = ({
   name,
@@ -8,6 +8,8 @@ const FormSelect = ({
   required,
   onChange,
   apiData,
+  sampleApi,
+  noLabel,
   ...props
 }) => {
   const [data, setData] = useState({});
@@ -31,10 +33,14 @@ const FormSelect = ({
     <>
       <div className="mb-6">
         <div className="text-gray-900 md:flex md:items-center">
-          <div className="mb-1 md:mb-0 md:w-1/3">
-            <label htmlFor="nama">{label}</label>
-          </div>
-          <div className="md:w-2/3 md:flex-grow">
+          {!noLabel && (
+            <div className="mb-1 md:mb-0 md:w-1/3">
+              <label htmlFor="nama">{label}</label>
+            </div>
+          )}
+          <div
+            className={"md:flex-grow " + (!noLabel ? "md:w-full" : "md:w-2/3")}
+          >
             <select
               className="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline"
               type={type || "text"}
@@ -44,11 +50,12 @@ const FormSelect = ({
               onChange={onChange}
             >
               <option value=""></option>
-              {Array.from(data).map((option, key) => (
-                <option value={option.id} key={key}>
-                  {option.nama}
-                </option>
-              ))}
+              {!loading &&
+                Array.from(data).map((option, key) => (
+                  <option value={option.id} key={key}>
+                    {sampleApi ? option.jenis_spesimen : option.nama}
+                  </option>
+                ))}
             </select>
           </div>
         </div>
