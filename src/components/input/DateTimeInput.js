@@ -32,7 +32,7 @@ const DateTimeInput = ({
             />
             <input
               className="w-1/2 h-10 px-3 text-base placeholder-gray-600 border rounded-r-lg focus:shadow-outline"
-              type="text"
+              type="time"
               name={nameTime}
               autoComplete="off"
               required={required || false}
