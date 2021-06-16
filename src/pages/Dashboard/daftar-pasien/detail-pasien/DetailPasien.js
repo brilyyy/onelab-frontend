@@ -129,7 +129,7 @@ const DetailPasien = (props) => {
             defaultPlace={data.tempat_lahir}
             date={data.tanggal_lahir}
           />
-          <FormInput
+          {/* <FormInput
             label="Jenis Kelamin"
             name="jenis_kelamin"
             type="text"
@@ -137,7 +137,28 @@ const DetailPasien = (props) => {
             onChange={handleChange}
             defaultValue={data.jenis_kelamin}
             disabled={disabled}
-          />
+          /> */}
+          <div className="mb-6">
+            <div className="text-gray-900 md:flex md:items-center">
+              <div className="mb-1 md:mb-0 md:w-1/3">
+                <label htmlFor="nama">Jenis Kelamin</label>
+              </div>
+              <div className={"md:flex-grow md:w-2/3"}>
+                <select
+                  className="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline"
+                  name="jenis_kelamin"
+                  autoComplete="off"
+                  required
+                  defaultValue={data.jenis_kelamin}
+                  onChange={handleChange}
+                >
+                  <option value=""></option>
+                  <option value="L">Laki-Laki</option>
+                  <option value="P">Perempuan</option>
+                </select>
+              </div>
+            </div>
+          </div>
           <FormInput
             label="Alamat"
             name="alamat"

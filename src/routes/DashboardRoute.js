@@ -3,12 +3,16 @@ import DetailPasien from "@/pages/Dashboard/daftar-pasien/detail-pasien/DetailPa
 import DaftarTes from "@/pages/Dashboard/daftar-tes/DaftarTes";
 import DetailPemeriksaan from "@/pages/Dashboard/daftar-tes/detail-pemeriksaan/DetailPemeriksaan";
 import DetailTes from "@/pages/Dashboard/daftar-tes/detail-tes/DetailTes";
+import CetakPembayaran from "@/pages/Dashboard/hasil-pemeriksaan/cetak/CetakPembayaran";
 import HasilPemeriksaan from "@/pages/Dashboard/hasil-pemeriksaan/HasilPemeriksaan";
+import Hasil from "@/pages/Dashboard/hasil-pemeriksaan/steps/Hasil";
+import Pembayaran from "@/pages/Dashboard/hasil-pemeriksaan/steps/Pembayaran";
+import Selesai from "@/pages/Dashboard/hasil-pemeriksaan/steps/Selesai";
 import Home from "@/pages/Dashboard/home/Home";
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 
-const DashboardRoute = () => {
+const DashboardRoute = ({ name, ...props }) => {
   return (
     <>
       <Switch>
@@ -61,6 +65,18 @@ const DashboardRoute = () => {
           component={() => <DetailPemeriksaan title="edit" />}
         />
         <Route exact path="/hasil-pemeriksaan" component={HasilPemeriksaan} />
+        <Route
+          exact
+          path="/hasil-pemeriksaan/pembayaran"
+          component={Pembayaran}
+        />
+        <Route
+          exact
+          path="/hasil-pemeriksaan/pembayaran/cetak"
+          component={CetakPembayaran}
+        />
+        <Route exact path="/hasil-pemeriksaan/hasil" component={Hasil} />
+        <Route exact path="/hasil-pemeriksaan/selesai" component={Selesai} />
       </Switch>
     </>
   );

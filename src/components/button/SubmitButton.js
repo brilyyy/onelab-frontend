@@ -1,9 +1,10 @@
 import React from "react";
 
-const SubmitButton = ({ loading, ...props }) => {
+const SubmitButton = ({ loading, onClick, ...props }) => {
   return (
     <>
       <button
+        onClick={onClick}
         type="submit"
         className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg inline-flex"
       >

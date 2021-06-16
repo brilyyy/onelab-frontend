@@ -71,17 +71,25 @@ const Dashboard = () => {
             </div>
 
             {/* Links */}
-            <SidebarLink to="/" title="Home" onClick={() => setOpen(!open)} />
-            <SidebarLink
-              to="/daftar-pasien"
-              title="Data Pasien"
-              onClick={() => setOpen(!open)}
-            />
-            <SidebarLink
-              to="/daftar-tes"
-              title="Daftar Pemeriksaan"
-              onClick={() => setOpen(!open)}
-            />
+            {username === "Laboran" && (
+              <>
+                <SidebarLink
+                  to="/"
+                  title="Home"
+                  onClick={() => setOpen(!open)}
+                />
+                <SidebarLink
+                  to="/daftar-pasien"
+                  title="Data Pasien"
+                  onClick={() => setOpen(!open)}
+                />
+                <SidebarLink
+                  to="/daftar-tes"
+                  title="Daftar Pemeriksaan"
+                  onClick={() => setOpen(!open)}
+                />
+              </>
+            )}
             <SidebarLink
               to="/hasil-pemeriksaan"
               title="Hasil Pemeriksaan"
@@ -96,7 +104,7 @@ const Dashboard = () => {
           </div>
         </aside>
         <main>
-          <DashboardRoute />
+          <DashboardRoute name={username} />
         </main>
       </div>
     </Router>

@@ -10,6 +10,8 @@ const FormSelect = ({
   apiData,
   sampleApi,
   noLabel,
+  defaultValue,
+  disabled,
   ...props
 }) => {
   const [data, setData] = useState({});
@@ -27,6 +29,7 @@ const FormSelect = ({
     return () => {
       isSubscribed = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -48,6 +51,8 @@ const FormSelect = ({
               autoComplete="off"
               required={required || false}
               onChange={onChange}
+              disabled={disabled}
+              defaultValue={defaultValue}
             >
               <option value=""></option>
               {!loading &&
