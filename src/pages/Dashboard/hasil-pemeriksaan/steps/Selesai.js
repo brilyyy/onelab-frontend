@@ -3,30 +3,26 @@ import FormInput from "@/components/input/FormInput";
 import DateInput from "@/components/input/DateInput";
 import DateTimeInput from "@/components/input/DateTimeInput";
 import React, { useState, useEffect } from "react";
-import { fetchDatas, showData } from "@/utils/ApiServices";
+import { showData } from "@/utils/ApiServices";
 import { useHistory } from "react-router";
+import { useParams } from "react-router-dom";
 
 const Selesai = () => {
   let history = useHistory();
+  let { id } = useParams();
   const [data, setData] = useState({});
-  const [currentId, setCurrentId] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isSubscribed = true;
     if (isSubscribed) {
-      fetchDatas("labresults/latest")
+      showData("labresults", id)
         .then((res) => {
-          setCurrentId(res.id);
-          console.log(currentId);
-          showData("labresults", res.id)
-            .then((res) => {
-              setData(res[0]);
-              setLoading(false);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+          console.log(res[0]);
+          setData(res[0]);
+          setTimeout(() => {
+            setLoading(false);
+          }, 2000);
         })
         .catch((err) => {
           console.log(err);
@@ -38,8 +34,29 @@ const Selesai = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const getHarga = (e) => {
+    let harga = 0;
+    data.patient.payment.forEach((pay) => {
+      harga += parseInt(pay.examination.harga);
+    });
+    return harga;
+  };
+
+  const formatRupiah = (b) => {
+    var number_string = b.toString(),
+      sisa = number_string.length % 3,
+      rupiah = number_string.substr(0, sisa),
+      ribuan = number_string.substr(sisa).match(/\d{3}/g);
+
+    if (ribuan) {
+      let separator = sisa ? "." : "";
+      rupiah += separator + ribuan.join(".");
+    }
+    return rupiah;
+  };
+
   return (
-    <div className="min-h-screen bg-yellow-400 pb-8">
+    <div className="min-h-screen bg-yellow-400 bg-pattern-lab pb-8">
       {!loading && (
         <>
           <HeaderBar>Data Hasil Pemeriksaan</HeaderBar>
@@ -98,12 +115,6 @@ const Selesai = () => {
                 disabled
                 defaultValue={data.no_spesimen}
               />
-              <FormInput
-                label="Jenis Spesimen"
-                name="jenis_spesimen"
-                disabled
-                defaultValue={data.sample.jenis_spesimen}
-              />
               <DateTimeInput
                 label="Tanggal/Jam Pengambilan"
                 nameDate="tanggal_pengambilan_spesimen"
@@ -136,16 +147,17 @@ const Selesai = () => {
                 </tr>
               </thead>
               <tbody className="text-base select-none">
-                {Array.from(data.payment).map((paymentData, key) => (
+                {Array.from(data.patient.payment).map((paymentData, key) => (
                   <tr key={key}>
                     <td className="border border-gray-300 p-1">{key + 1}</td>
                     <td className="border border-gray-300 p-1">
                       {paymentData.examination.nama}
                     </td>
                     <td className="border border-gray-300 p-1">
+                      Rp{" "}
                       {paymentData.examination.harga === ""
                         ? 0
-                        : paymentData.examination.harga}
+                        : formatRupiah(paymentData.examination.harga)}
                     </td>
                   </tr>
                 ))}
@@ -159,7 +171,7 @@ const Selesai = () => {
                     Total Harga
                   </td>
                   <td className="border border-gray-300 px-2 py-1 font-medium text-sm">
-                    0
+                    Rp {formatRupiah(getHarga())}
                   </td>
                 </tr>
               </tfoot>
@@ -185,6 +197,9 @@ const Selesai = () => {
                     Satuan
                   </th>
                   <th className="border border-gray-300 px-2 py-1 font-medium text-sm">
+                    Sample
+                  </th>
+                  <th className="border border-gray-300 px-2 py-1 font-medium text-sm">
                     Catatan
                   </th>
                 </tr>
@@ -194,16 +209,20 @@ const Selesai = () => {
                   <tr key={key}>
                     <td className="border border-gray-300 p-1">{key + 1}</td>
                     <td className="border border-gray-300 p-1">
-                      {testresults.examination.nama}
+                      {testresults.examresults.nama}
                     </td>
                     <td className="border border-gray-300 p-1">
                       {testresults.hasil}
                     </td>
                     <td className="border border-gray-300 p-1">
-                      {testresults.examination.nilai_rujukan}
+                      {testresults.examresults.nilai_rujukan}
                     </td>
                     <td className="border border-gray-300 p-1">
-                      {testresults.examination.satuan}
+                      {testresults.examresults.satuan}
+                    </td>
+                    <td className="border border-gray-300 p-1">
+                      {testresults.sample !== null &&
+                        testresults.sample.jenis_spesimen}
                     </td>
                     <td className="border border-gray-300 p-1">
                       {testresults.catatan}

@@ -7,14 +7,14 @@ const tableHeader = [
   "Nomor Rekam Medis",
   "Nama",
   "Nomor Telp",
-  "Kecamatan",
+  "Alamat",
   "Aksi",
 ];
-const cols = ["no_rm", "nama", "no_telp", "kecamatan"];
+const cols = ["no_rm", "nama", "no_telp", "alamat"];
 
 const DaftarPasien = () => {
   return (
-    <div className="min-h-screen bg-yellow-400 pb-8">
+    <div className="min-h-screen bg-yellow-400 bg-pattern-lab pb-8">
       <HeaderBar>Daftar Pasien</HeaderBar>
       <div className="mx-4 my-2 p-3 bg-gray-50 rounded-lg">
         <Table

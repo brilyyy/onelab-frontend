@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { addData, fetchDatas } from "@/utils/ApiServices";
+import { addData, fetchDatas, showData } from "@/utils/ApiServices";
 import FormSelect from "@/components/input/FormSelect";
 import HeaderBar from "@/components/navigation/HeaderBar";
 import { useHistory } from "react-router";
@@ -9,24 +9,21 @@ const Pembayaran = () => {
   const [currentId, setCurrentId] = useState(0);
   const [dataLab, setDataLab] = useState({});
   const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
   let history = useHistory();
 
   useEffect(() => {
     let isSubscribed = true;
     if (isSubscribed) {
-      fetchDatas("labresults/latest")
+      fetchDatas("patient/latest")
         .then((res) => {
           setCurrentId(res.id);
           console.log(res);
-          fetchDatas("labresults/" + res.id)
-            .then((res) => {
-              console.log(res);
-              setDataLab(res);
-              setAddExam(false);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+          showData("patients", res.id).then((res) => {
+            setDataLab(res);
+            console.log(res);
+            setLoading(false);
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -39,31 +36,61 @@ const Pembayaran = () => {
 
   const handlePaymentSubmit = (e) => {
     e.preventDefault();
-    data.lab_result_id = currentId;
+    data.patient_id = currentId;
     addData("payment", data).then((res) => {
       console.log(res);
-      addData("testresult", data)
-        .then((res) => {
-          console.log(res);
-          fetchDatas("labresults/" + currentId)
-            .then((res) => {
-              console.log(res);
-              setDataLab(res);
-              setAddExam(false);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      showData("patients", currentId).then((res) => {
+        setDataLab(res);
+        console.log(res);
+        setAddExam(false);
+        setLoading(false);
+      });
     });
   };
 
+  const handleDone = (e) => {
+    addData("labresults", {
+      patient_id: currentId,
+      status: "Sudah Bayar",
+    })
+      .then((res) => {
+        console.log(res);
+        history.push("/daftar-pasien/tambah");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getHarga = (e) => {
+    if (dataLab[0].payment === undefined) {
+      return 0;
+    } else {
+      let harga = 0;
+      dataLab[0].payment.forEach((pay) => {
+        harga += parseInt(pay.examination.harga);
+      });
+      return harga;
+    }
+  };
+
+  const formatRupiah = (b) => {
+    var number_string = b.toString(),
+      sisa = number_string.length % 3,
+      rupiah = number_string.substr(0, sisa),
+      ribuan = number_string.substr(sisa).match(/\d{3}/g);
+
+    if (ribuan) {
+      let separator = sisa ? "." : "";
+      rupiah += separator + ribuan.join(".");
+    }
+
+    return rupiah;
+  };
+
   return (
-    <div className="min-h-screen bg-yellow-400 pb-8">
-      <HeaderBar>Pembayaran (2/3)</HeaderBar>
+    <div className="min-h-screen bg-yellow-400 bg-pattern-lab pb-8">
+      <HeaderBar>Pembayaran</HeaderBar>
       <div className="mx-4 my-2 p-3 bg-gray-50 rounded-lg">
         <button
           type="button"
@@ -88,7 +115,7 @@ const Pembayaran = () => {
             </tr>
           </thead>
           <tbody className="text-base select-none">
-            {dataLab[0] !== undefined &&
+            {!loading &&
               Array.from(dataLab[0].payment).map((paymentData, key) => (
                 <tr key={key}>
                   <td className="border border-gray-300 p-1">{key + 1}</td>
@@ -96,9 +123,10 @@ const Pembayaran = () => {
                     {paymentData.examination.nama}
                   </td>
                   <td className="border border-gray-300 p-1">
+                    Rp{" "}
                     {paymentData.examination.harga === ""
                       ? 0
-                      : paymentData.examination.harga}
+                      : formatRupiah(paymentData.examination.harga)}
                   </td>
                 </tr>
               ))}
@@ -112,7 +140,7 @@ const Pembayaran = () => {
                 Total Harga
               </td>
               <td className="border border-gray-300 px-2 py-1 font-medium text-sm">
-                0
+                Rp {!loading && formatRupiah(getHarga())}
               </td>
             </tr>
           </tfoot>
@@ -121,7 +149,11 @@ const Pembayaran = () => {
           <button
             type="button"
             onClick={() => {
-              history.push("/hasil-pemeriksaan/pembayaran/cetak");
+              const win = window.open(
+                "/daftar-pasien/pembayaran/cetak",
+                "_blank"
+              );
+              win.focus();
             }}
             className="mr-2 focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg mb-3"
           >
@@ -129,12 +161,10 @@ const Pembayaran = () => {
           </button>
           <button
             type="button"
-            onClick={() => {
-              history.push("/hasil-pemeriksaan/hasil");
-            }}
+            onClick={handleDone}
             className="ml-2 focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg mb-3"
           >
-            Lanjut
+            Selesai
           </button>
         </div>
       </div>

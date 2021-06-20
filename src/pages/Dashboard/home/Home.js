@@ -4,9 +4,9 @@ import logo from "@/img/logo.png";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-yellow-400">
+    <div className="min-h-screen bg-yellow-400 bg-pattern-lab">
       <HeaderBar>Home</HeaderBar>
-      <div className="mx-4 my-2 py-20 bg-gray-200 rounded-lg text-center">
+      <div className="mx-4 my-2 py-20 bg-gray-100 rounded-lg text-center">
         <h1 className="font-bold text-5xl mb-3">Selamat Datang</h1>
         <h1 className="font-bold text-3xl mb-3">di Sistem Informasi</h1>
         <h1 className="font-bold text-4xl">Laboratorium Klinik</h1>

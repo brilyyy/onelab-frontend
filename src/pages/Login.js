@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { authLogin } from "@/utils/ApiServices";
 import { storeData } from "@/utils/StorageServices";
+import logo from "@/img/logo_white.png";
 
 const Login = () => {
   let history = useHistory();
@@ -32,10 +33,10 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col bg-yellow-500 justify-center">
+    <div className="w-full h-screen flex flex-col bg-yellow-500 bg-pattern-lab justify-center">
       <div className="flex justify-center py-10">
         <div className="p-8 w-80 rounded-l-xl bg-blue-900">
-          <h1>hi</h1>
+          <img src={logo} alt="logo" className="mt-20 ml-6" width="200" />
         </div>
         <div className="p-8 w-80 rounded-r-xl bg-white">
           <h1 className="text-blue-900 text-2xl font-bold mb-16">Login</h1>

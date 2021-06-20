@@ -6,6 +6,7 @@ import { useHistory, useParams } from "react-router-dom";
 import CloseButton from "@/components/button/CloseButton";
 import SubmitButton from "@/components/button/SubmitButton";
 import DateInput from "@/components/input/DateInput";
+import FormSearch from "@/components/input/FormSearch";
 
 const DetailPasien = (props) => {
   let { id } = useParams();
@@ -18,9 +19,6 @@ const DetailPasien = (props) => {
     tanggal_lahir: "",
     jenis_kelamin: "",
     alamat: "",
-    kecamatan: "",
-    kabupaten: "",
-    provinsi: "",
     no_telp: "",
     email: "",
     nama_wali: "",
@@ -28,6 +26,7 @@ const DetailPasien = (props) => {
     no_telp_wali: "",
   });
   const [loading, setLoading] = useState(true);
+  const [rm, setRm] = useState();
   const [uploading, setUploading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
@@ -59,18 +58,20 @@ const DetailPasien = (props) => {
 
   const handleSubmit = (e) => {
     setUploading(true);
+    data.no_rm = rm;
     e.preventDefault();
+    console.log(data);
     if (props.title === "add") {
       addData("patients", data).then((res) => {
         console.log(res);
         setUploading(false);
-        history.replace("/daftar-pasien");
+        history.replace("/daftar-pasien/pembayaran");
       });
     } else if (props.title === "edit") {
       updateData("patients", data, id).then((res) => {
         console.log(res);
         setUploading(false);
-        history.replace("/daftar-pasien");
+        history.replace("/daftar-pasien/pembayaran");
       });
     }
   };
@@ -79,8 +80,25 @@ const DetailPasien = (props) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
+  const handleRmChange = (e) => {
+    setRm(e.target.value);
+  };
+
+  const handleSearch = (e) => {
+    console.log(rm);
+    showData("patients/rm", rm)
+      .then((res) => {
+        setData(res[0]);
+        data.patient_id = res[0].id;
+        console.log(res[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
-    <div className="min-h-screen bg-yellow-400 pb-8">
+    <div className="min-h-screen bg-yellow-400 bg-pattern-lab pb-8">
       <HeaderBar>
         {(props.title === "add" && "Tambah Data Pasien") ||
           (props.title === "edit" && "Ubah Data Pasien") ||
@@ -91,13 +109,13 @@ const DetailPasien = (props) => {
           <CloseButton backTo="/daftar-pasien" />
         </div>
         <form onSubmit={handleSubmit}>
-          <FormInput
+          <FormSearch
             label="Nomor Rekam Medis"
             name="no_rm"
             type="number"
             required={true}
-            onChange={handleChange}
-            defaultValue={data.no_rm}
+            onChange={handleRmChange}
+            onClick={handleSearch}
             disabled={disabled}
           />
           <FormInput
@@ -106,7 +124,7 @@ const DetailPasien = (props) => {
             type="text"
             required={true}
             onChange={handleChange}
-            defaultValue={data.nama}
+            defaultValue={data !== undefined && data.nama}
             disabled={disabled}
           />
           <FormInput
@@ -114,7 +132,7 @@ const DetailPasien = (props) => {
             name="nik"
             type="number"
             onChange={handleChange}
-            defaultValue={data.nik}
+            defaultValue={data !== undefined && data.nik}
             disabled={disabled}
           />
           <DateInput
@@ -125,19 +143,11 @@ const DetailPasien = (props) => {
             nameDate="tanggal_lahir"
             onChangePlace={handleChange}
             onChangeDate={handleChange}
-            defaultDate={data.tanggal_lahir}
-            defaultPlace={data.tempat_lahir}
-            date={data.tanggal_lahir}
+            defaultDate={data !== undefined && data.tanggal_lahir}
+            defaultPlace={data !== undefined && data.tempat_lahir}
+            date={data !== undefined && data.tanggal_lahir}
           />
-          {/* <FormInput
-            label="Jenis Kelamin"
-            name="jenis_kelamin"
-            type="text"
-            required={true}
-            onChange={handleChange}
-            defaultValue={data.jenis_kelamin}
-            disabled={disabled}
-          /> */}
+
           <div className="mb-6">
             <div className="text-gray-900 md:flex md:items-center">
               <div className="mb-1 md:mb-0 md:w-1/3">
@@ -149,7 +159,7 @@ const DetailPasien = (props) => {
                   name="jenis_kelamin"
                   autoComplete="off"
                   required
-                  defaultValue={data.jenis_kelamin}
+                  defaultValue={data !== undefined && data.jenis_kelamin}
                   onChange={handleChange}
                 >
                   <option value=""></option>
@@ -165,33 +175,7 @@ const DetailPasien = (props) => {
             type="text"
             required={true}
             onChange={handleChange}
-            defaultValue={data.alamat}
-            disabled={disabled}
-          />
-          <FormInput
-            label="Kecamatan"
-            name="kecamatan"
-            type="text"
-            required={true}
-            onChange={handleChange}
-            defaultValue={data.kecamatan}
-            disabled={disabled}
-          />
-          <FormInput
-            label="Kabupaten/Kota"
-            name="kabupaten"
-            type="text"
-            required={true}
-            onChange={handleChange}
-            defaultValue={data.kabupaten}
-            disabled={disabled}
-          />
-          <FormInput
-            label="Provinsi"
-            name="provinsi"
-            type="text"
-            onChange={handleChange}
-            defaultValue={data.provinsi}
+            defaultValue={data !== undefined && data.alamat}
             disabled={disabled}
           />
           <FormInput
@@ -200,7 +184,7 @@ const DetailPasien = (props) => {
             type="number"
             required={true}
             onChange={handleChange}
-            defaultValue={data.no_telp}
+            defaultValue={data !== undefined && data.no_telp}
             disabled={disabled}
           />
           <FormInput
@@ -208,7 +192,7 @@ const DetailPasien = (props) => {
             name="email"
             type="email"
             onChange={handleChange}
-            defaultValue={data.email}
+            defaultValue={data !== undefined && data.email}
             disabled={disabled}
           />
           <FormInput
@@ -216,7 +200,7 @@ const DetailPasien = (props) => {
             name="nama_wali"
             type="text"
             onChange={handleChange}
-            defaultValue={data.nama_wali}
+            defaultValue={data !== undefined && data.nama_wali}
             disabled={disabled}
           />
           <FormInput
@@ -224,7 +208,7 @@ const DetailPasien = (props) => {
             name="jenis_kelamin_wali"
             type="text"
             onChange={handleChange}
-            defaultValue={data.jenis_kelamin_wali}
+            defaultValue={data !== undefined && data.jenis_kelamin_wali}
             disabled={disabled}
           />
           <FormInput
@@ -232,7 +216,7 @@ const DetailPasien = (props) => {
             name="no_telp_wali"
             type="number"
             onChange={handleChange}
-            defaultValue={data.no_telp_wali}
+            defaultValue={data !== undefined && data.no_telp_wali}
             disabled={disabled}
           />
           <div className="flex justify-end">

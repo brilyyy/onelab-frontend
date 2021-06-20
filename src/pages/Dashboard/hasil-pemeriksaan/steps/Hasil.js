@@ -1,13 +1,15 @@
 import FormInput from "@/components/input/FormInput";
+import FormSelect from "@/components/input/FormSelect";
 import HeaderBar from "@/components/navigation/HeaderBar";
-import { fetchDatas, showData, updateData } from "@/utils/ApiServices";
+import { addData, showData, updateData } from "@/utils/ApiServices";
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router";
+import { useParams } from "react-router-dom";
 
 const Hasil = () => {
+  let { id } = useParams();
   let history = useHistory();
   const [data, setData] = useState({});
-  const [currentId, setCurrentId] = useState();
   const [testId, setTestId] = useState();
   const [examId, setExamId] = useState();
   const [dataLab, setDataLab] = useState();
@@ -16,17 +18,33 @@ const Hasil = () => {
   useEffect(() => {
     let isSubscribed = true;
     if (isSubscribed) {
-      fetchDatas("labresults/latest")
+      showData("labresults", id)
         .then((res) => {
-          setCurrentId(res.id);
-          console.log(currentId);
-          showData("labresults", res.id)
-            .then((res) => {
-              setDataLab(res[0]);
-            })
-            .catch((err) => {
-              console.log(err);
+          // res[0].patient.payment.forEach((v, k) => {
+          //   addData("testresult", {
+          //     lab_result_id: id,
+          //     examination_id: v.examination.id,
+          //   }).then((res) => {
+          //     showData("labresults", id).then((res) => {
+          //       console.log(res[0]);
+          //       setDataLab(res[0]);
+          //     });
+          //   });
+          // });
+          res[0].patient.payment.forEach((pay) => {
+            pay.examination.examresults.forEach((exr) => {
+              addData("testresult", {
+                lab_result_id: id,
+                exam_result_id: exr.id,
+              }).then((res) => {
+                showData("labresults", id).then((res) => {
+                  console.log(res[0]);
+                  setDataLab(res[0]);
+                });
+              });
             });
+          });
+          console.log(res[0]);
         })
         .catch((err) => {
           console.log(err);
@@ -44,15 +62,15 @@ const Hasil = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    data.lab_result_id = currentId;
+    data.lab_result_id = id;
     data.id = testId;
-    data.examination_id = examId;
+    data.exam_result_id = examId;
     console.log(data);
 
     updateData("testresult", data, testId)
       .then((res) => {
         console.log(res);
-        showData("labresults", currentId)
+        showData("labresults", id)
           .then((res) => {
             setDataLab(res[0]);
           })
@@ -68,8 +86,8 @@ const Hasil = () => {
   };
 
   return (
-    <div className="min-h-screen bg-yellow-400 pb-8">
-      <HeaderBar>Hasil Pemeriksaan (3/3)</HeaderBar>
+    <div className="min-h-screen bg-yellow-400 bg-pattern-lab pb-8">
+      <HeaderBar>Hasil Pemeriksaan</HeaderBar>
       <div className="mx-4 my-2 p-3 bg-gray-50 rounded-lg">
         <table className="w-full mb-6">
           <thead className="bg-gray-100 text-base select-none ">
@@ -90,6 +108,9 @@ const Hasil = () => {
                 Satuan
               </th>
               <th className="border border-gray-300 px-2 py-1 font-medium text-sm">
+                Sample
+              </th>
+              <th className="border border-gray-300 px-2 py-1 font-medium text-sm">
                 Catatan
               </th>
               <th className="border border-gray-300 px-2 py-1 font-medium text-sm">
@@ -103,16 +124,20 @@ const Hasil = () => {
                 <tr key={key}>
                   <td className="border border-gray-300 p-1">{key + 1}</td>
                   <td className="border border-gray-300 p-1">
-                    {testresults.examination.nama}
+                    {testresults.examresults.nama}
                   </td>
                   <td className="border border-gray-300 p-1">
                     {testresults.hasil}
                   </td>
                   <td className="border border-gray-300 p-1">
-                    {testresults.examination.nilai_rujukan}
+                    {testresults.examresults.nilai_rujukan}
                   </td>
                   <td className="border border-gray-300 p-1">
-                    {testresults.examination.satuan}
+                    {testresults.examresults.satuan}
+                  </td>
+                  <td className="border border-gray-300 p-1">
+                    {testresults.sample !== null &&
+                      testresults.sample.jenis_spesimen}
                   </td>
                   <td className="border border-gray-300 p-1">
                     {testresults.catatan}
@@ -123,7 +148,7 @@ const Hasil = () => {
                       onClick={() => {
                         console.log(testresults.id);
                         setTestId(testresults.id);
-                        setExamId(testresults.examination.id);
+                        setExamId(testresults.examresults.id);
                         setAddHasil(true);
                       }}
                       className="focus:outline-none text-white text-sm py-2.5 px-3 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg mb-3"
@@ -138,7 +163,7 @@ const Hasil = () => {
         <button
           type="button"
           onClick={() => {
-            history.push("/hasil-pemeriksaan/selesai");
+            history.push("/hasil-pemeriksaan/selesai/" + id);
           }}
           className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg mb-3"
         >
@@ -203,6 +228,13 @@ const Hasil = () => {
                               name="catatan"
                               label="Catatan"
                               onChange={handleChange}
+                            />
+                            <FormSelect
+                              name="sample_id"
+                              apiData="samples"
+                              onChange={handleChange}
+                              sampleApi
+                              label="Jenis Spesimen"
                             />
                           </div>
                         </div>

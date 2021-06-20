@@ -4,7 +4,7 @@ import FormSearch from "@/components/input/FormSearch";
 import DateInput from "@/components/input/DateInput";
 import FormSelect from "@/components/input/FormSelect";
 import HeaderBar from "@/components/navigation/HeaderBar";
-import { addData, showData } from "@/utils/ApiServices";
+import { showData, updateData } from "@/utils/ApiServices";
 import React, { useState } from "react";
 import DateTimeInput from "@/components/input/DateTimeInput";
 import { useHistory } from "react-router";
@@ -18,22 +18,33 @@ const HasilPemeriksaan = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     data.tanggal_transaksi = new Date().toISOString().slice(0, 10);
-    addData("labresults", data)
+    data.status = "Sampled";
+    showData("labresults/patient", data.patient_id)
       .then((res) => {
         console.log(res);
-        history.push("hasil-pemeriksaan/pembayaran");
+        updateData("labresults", data, res[0].id)
+          .then((res) => {
+            console.log(res);
+            history.push("/hasil-pemeriksaan/hasil/" + res.id);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);
       });
     console.log(data);
   };
+
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
+
   const handleRmChange = (e) => {
     setRm(e.target.value);
   };
+
   const handleSearch = (e) => {
     showData("patients/rm", rm)
       .then((res) => {
@@ -48,8 +59,8 @@ const HasilPemeriksaan = () => {
   };
 
   return (
-    <div className="min-h-screen bg-yellow-400 pb-8">
-      <HeaderBar>Pemeriksaan (1/3)</HeaderBar>
+    <div className="min-h-screen bg-yellow-400 bg-pattern-lab pb-8">
+      <HeaderBar>Pemeriksaan</HeaderBar>
       <form onSubmit={onSubmit}>
         <div className="grid grid-cols-2 gap-3">
           <div className="ml-4 my-2 p-3 bg-gray-50 rounded-lg">
@@ -108,13 +119,6 @@ const HasilPemeriksaan = () => {
               type="number"
               onChange={handleChange}
               required
-            />
-            <FormSelect
-              label="Jenis Spesimen"
-              name="sample_id"
-              apiData="samples"
-              sampleApi
-              onChange={handleChange}
             />
             <DateTimeInput
               label="Tanggal/Jam Pengambilan"

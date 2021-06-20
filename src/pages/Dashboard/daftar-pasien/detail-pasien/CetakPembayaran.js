@@ -1,5 +1,6 @@
 import { fetchDatas, showData } from "@/utils/ApiServices";
 import React, { useEffect, useState } from "react";
+import logo from "@/img/logo.png";
 
 const CetakPembayaran = () => {
   const [data, setData] = useState();
@@ -7,13 +8,15 @@ const CetakPembayaran = () => {
   useEffect(() => {
     let isSubscribed = true;
     if (isSubscribed) {
-      fetchDatas("labresults/latest")
+      fetchDatas("patient/latest")
         .then((res) => {
-          showData("labresults", res.id)
+          showData("patients", res.id)
             .then((res) => {
               setData(res[0]);
               setLoading(false);
-              window.print();
+              setTimeout(() => {
+                window.print();
+              }, 1000);
             })
             .catch((err) => {
               console.log(err);
@@ -28,13 +31,53 @@ const CetakPembayaran = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const getAge = (date) => {
+    let today = new Date();
+    let birthDate = new Date(date);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    let month = today.getMonth() - birthDate.getMonth();
+
+    if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    return age;
+  };
+
+  const getHarga = (e) => {
+    if (data.payment === undefined) {
+      return 0;
+    } else {
+      let harga = 0;
+      data.payment.forEach((pay) => {
+        harga += parseInt(pay.examination.harga);
+      });
+      return harga;
+    }
+  };
+
+  const formatRupiah = (b) => {
+    var number_string = b.toString(),
+      sisa = number_string.length % 3,
+      rupiah = number_string.substr(0, sisa),
+      ribuan = number_string.substr(sisa).match(/\d{3}/g);
+
+    if (ribuan) {
+      let separator = sisa ? "." : "";
+      rupiah += separator + ribuan.join(".");
+    }
+
+    return rupiah;
+  };
+
   return (
     <>
       {!loading && (
         <div className="py-3 px-5 m-2 border border-black">
           <div className="flex mb-10">
             <div className="mr-3">
-              <h1>Onelab</h1>
+              <img src={logo} alt="logo" className="mt-3" width="100" />
             </div>
             <div className="flex flex-col">
               <h1>Laboratorium OneLab</h1>
@@ -51,24 +94,29 @@ const CetakPembayaran = () => {
           <table className="w-1/3 mb-10">
             <tbody>
               <tr>
+                <td>No. Registrasi</td>
+                <td>:</td>
+                <td>{String(data.id).padStart(8, "0")}</td>
+              </tr>
+              <tr>
                 <td>No. Rekam Medis</td>
                 <td>:</td>
-                <td>{data.patient.no_rm}</td>
+                <td>{data.no_rm}</td>
               </tr>
               <tr>
                 <td>Nama</td>
                 <td>:</td>
-                <td>{data.patient.nama}</td>
+                <td>{data.nama}</td>
               </tr>
               <tr>
                 <td>Alamat</td>
                 <td>:</td>
-                <td>{data.patient.alamat}</td>
+                <td>{data.alamat}</td>
               </tr>
               <tr>
                 <td>Umur</td>
                 <td>:</td>
-                <td>{data.patient.tanggal_lahir}</td>
+                <td>{getAge(data.tanggal_lahir)}</td>
               </tr>
             </tbody>
           </table>
@@ -83,14 +131,14 @@ const CetakPembayaran = () => {
               {data.payment.map((pay, key) => (
                 <tr key={key}>
                   <td>{pay.examination.nama}</td>
-                  <td>{pay.examination.harga}</td>
+                  <td>Rp {formatRupiah(pay.examination.harga)}</td>
                 </tr>
               ))}
             </tbody>
             <tfoot className="border-t border-b border-black">
               <tr>
                 <td>Total</td>
-                <td>0</td>
+                <td>Rp {formatRupiah(getHarga())}</td>
               </tr>
             </tfoot>
           </table>

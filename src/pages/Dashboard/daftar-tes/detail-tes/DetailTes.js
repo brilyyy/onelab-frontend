@@ -76,7 +76,7 @@ const DetailTes = ({ title, ...props }) => {
   };
 
   return (
-    <div className="min-h-screen bg-yellow-400 pb-8">
+    <div className="min-h-screen bg-yellow-400 bg-pattern-lab pb-8">
       <HeaderBar>
         {(title === "add" && "Tambah Data Tes") ||
           (title === "edit" && "Ubah Data Tes") ||
