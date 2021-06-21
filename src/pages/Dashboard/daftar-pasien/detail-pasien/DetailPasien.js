@@ -112,7 +112,7 @@ const DetailPasien = (props) => {
           <FormSearch
             label="Nomor Rekam Medis"
             name="no_rm"
-            type="number"
+            type="text"
             required={true}
             onChange={handleRmChange}
             onClick={handleSearch}

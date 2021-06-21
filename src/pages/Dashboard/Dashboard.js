@@ -78,21 +78,24 @@ const Dashboard = () => {
                   title="Home"
                   onClick={() => setOpen(!open)}
                 />
-                {username === "Laboran" && (
+                {username === "Manager" && (
                   <>
+                    <SidebarLink
+                      to="/daftar-tes"
+                      title="Daftar Pemeriksaan"
+                      onClick={() => setOpen(!open)}
+                    />
+                    <SidebarLink
+                      to="/daftar-pasien"
+                      title="Registrasi Pasien"
+                      onClick={() => setOpen(!open)}
+                    />
                     <SidebarLink
                       to="/hasil-pemeriksaan"
                       title="Hasil Pemeriksaan"
                       onClick={() => setOpen(!open)}
                     />
                   </>
-                )}
-                {username === "Manager" && (
-                  <SidebarLink
-                    to="/daftar-tes"
-                    title="Daftar Pemeriksaan"
-                    onClick={() => setOpen(!open)}
-                  />
                 )}
                 {username === "Registrasi" && (
                   <SidebarLink

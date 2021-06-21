@@ -3,7 +3,7 @@ import FormInput from "@/components/input/FormInput";
 import DateInput from "@/components/input/DateInput";
 import DateTimeInput from "@/components/input/DateTimeInput";
 import React, { useState, useEffect } from "react";
-import { showData } from "@/utils/ApiServices";
+import { showData, updateData } from "@/utils/ApiServices";
 import { useHistory } from "react-router";
 import { useParams } from "react-router-dom";
 
@@ -232,13 +232,28 @@ const Selesai = () => {
               </tbody>
             </table>
             <div className="flex justify-center">
-              <button className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg mb-3 mr-2">
+              <button
+                className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg mb-3 mr-2"
+                onClick={() => {
+                  const win = window.open(
+                    `/hasil-pemeriksaan/${id}/cetak`,
+                    "_blank"
+                  );
+                  win.focus();
+                }}
+              >
                 Cetak Hasil
               </button>
               <button
                 className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg mb-3 ml-2"
                 onClick={() => {
-                  history.replace("/hasil-pemeriksaan");
+                  updateData("labresults", { ...data, status: "Sampled" }, id)
+                    .then((res) => {
+                      history.replace("/status");
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
                 }}
               >
                 Selesai

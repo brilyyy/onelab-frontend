@@ -12,6 +12,7 @@ import Home from "@/pages/Dashboard/home/Home";
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 import Sample from "@/pages/Dashboard/sample/Sample";
+import CetakHasil from "@/pages/Dashboard/hasil-pemeriksaan/steps/CetakHasil";
 
 const DashboardRoute = ({ name, ...props }) => {
   return (
@@ -48,15 +49,48 @@ const DashboardRoute = ({ name, ...props }) => {
               path="/daftar-pasien/pembayaran/cetak"
               component={CetakPembayaran}
             />
-            <Route exact path="/status" component={Sample} />
+            <Route
+              exact
+              path="/status"
+              component={() => <Sample username={name} />}
+            />
           </>
         )}
         {name === "Laboran" && (
           <>
-            {" "}
             <Route
               exact
-              path="/hasil-pemeriksaan"
+              path="/hasil-pemeriksaan/:id"
+              component={HasilPemeriksaan}
+            />
+            <Route
+              exact
+              path="/hasil-pemeriksaan/:id/hasil/"
+              component={Hasil}
+            />
+            <Route
+              exact
+              path="/hasil-pemeriksaan/:id/selesai"
+              component={Selesai}
+            />
+            <Route
+              exact
+              path="/hasil-pemeriksaan/:id/cetak"
+              component={CetakHasil}
+            />
+            <Route
+              exact
+              path="/status"
+              component={() => <Sample username={name} />}
+            />
+          </>
+        )}
+
+        {name === "Manager" && (
+          <>
+            <Route
+              exact
+              path="/hasil-pemeriksaan/:id"
               component={HasilPemeriksaan}
             />
             <Route
@@ -69,12 +103,34 @@ const DashboardRoute = ({ name, ...props }) => {
               path="/hasil-pemeriksaan/selesai/:id"
               component={Selesai}
             />
-            <Route exact path="/status" component={Sample} />
-          </>
-        )}
-
-        {name === "Manager" && (
-          <>
+            <Route exact path="/daftar-pasien" component={DaftarPasien} />
+            <Route
+              exact
+              path="/daftar-pasien/tambah"
+              component={() => <DetailPasien title="add" />}
+            />
+            <Route
+              exact
+              path="/daftar-pasien/lihat/:id"
+              component={() => (
+                <DetailPasien title="show" fieldDisable={true} />
+              )}
+            />
+            <Route
+              exact
+              path="/daftar-pasien/ubah/:id"
+              component={() => <DetailPasien title="edit" />}
+            />
+            <Route
+              exact
+              path="/daftar-pasien/pembayaran"
+              component={Pembayaran}
+            />
+            <Route
+              exact
+              path="/daftar-pasien/pembayaran/cetak"
+              component={CetakPembayaran}
+            />
             <Route exact path="/daftar-tes" component={DaftarTes} />
             <Route
               exact

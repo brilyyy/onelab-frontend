@@ -20,30 +20,7 @@ const Hasil = () => {
     if (isSubscribed) {
       showData("labresults", id)
         .then((res) => {
-          // res[0].patient.payment.forEach((v, k) => {
-          //   addData("testresult", {
-          //     lab_result_id: id,
-          //     examination_id: v.examination.id,
-          //   }).then((res) => {
-          //     showData("labresults", id).then((res) => {
-          //       console.log(res[0]);
-          //       setDataLab(res[0]);
-          //     });
-          //   });
-          // });
-          res[0].patient.payment.forEach((pay) => {
-            pay.examination.examresults.forEach((exr) => {
-              addData("testresult", {
-                lab_result_id: id,
-                exam_result_id: exr.id,
-              }).then((res) => {
-                showData("labresults", id).then((res) => {
-                  console.log(res[0]);
-                  setDataLab(res[0]);
-                });
-              });
-            });
-          });
+          setDataLab(res[0]);
           console.log(res[0]);
         })
         .catch((err) => {
@@ -163,7 +140,7 @@ const Hasil = () => {
         <button
           type="button"
           onClick={() => {
-            history.push("/hasil-pemeriksaan/selesai/" + id);
+            history.push(`/hasil-pemeriksaan/${id}/selesai`);
           }}
           className="focus:outline-none text-white text-sm py-2.5 px-5 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg mb-3"
         >

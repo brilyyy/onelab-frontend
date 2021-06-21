@@ -12,7 +12,7 @@ const FormSearch = ({ onClick, onChange }) => {
           <div className="md:w-2/3 md:flex-grow">
             <input
               className="w-2/3 h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline"
-              type="number"
+              type="text"
               name="no_rm"
               autoComplete="off"
               required
