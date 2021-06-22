@@ -20,6 +20,7 @@ const HasilPemeriksaan = () => {
     e.preventDefault();
     data.patient_id = dataLab.patient.id;
     data.status = dataLab.status;
+    data.no_spesimen = String(dataLab.patient.id).padStart(8, "0");
     updateData("labresults", data, id)
       .then((res) => {
         console.log(res);
@@ -130,8 +131,8 @@ const HasilPemeriksaan = () => {
                   label="No. Spesimen"
                   name="no_spesimen"
                   type="number"
-                  onChange={handleChange}
-                  required
+                  defaultValue={String(dataLab.patient.id).padStart(8, "0")}
+                  disabled
                 />
                 <DateTimeInput
                   label="Tanggal/Jam Pengambilan"

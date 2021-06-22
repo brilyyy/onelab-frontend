@@ -22,6 +22,7 @@ const DaftarPasien = () => {
           cols={cols}
           url="daftar-pasien"
           path="patients"
+          patient
         />
       </div>
     </div>

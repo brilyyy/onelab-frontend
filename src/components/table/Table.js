@@ -6,7 +6,7 @@ import Search from "./search/Search";
 import { useHistory } from "react-router-dom";
 import { deleteData, fetchDatas, showData } from "@/utils/ApiServices";
 
-const Table = ({ header, cols, url, path, child, id, ...props }) => {
+const Table = ({ header, cols, url, path, child, id, patient, ...props }) => {
   let history = useHistory();
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -98,39 +98,58 @@ const Table = ({ header, cols, url, path, child, id, ...props }) => {
           <td key={i} className="border border-gray-300 p-1">
             <div className="w-full flex justify-center">
               <div className="flex m-1" role="group">
-                <button
-                  type="button"
-                  className="focus:outline-none text-white text-sm p-2 bg-green-500 rounded-l-md hover:bg-green-600 hover:shadow-lg"
-                  onClick={() => {
-                    child
-                      ? history.push(`${id}/${url}/lihat/${data.id}`)
-                      : history.push(`${url}/lihat/${data.id}`);
-                  }}
-                >
-                  <AiTwotoneEye />
-                </button>
-                <button
-                  type="button"
-                  className="focus:outline-none text-white text-sm p-2 bg-yellow-500 hover:bg-yellow-600 hover:shadow-lg"
-                  onClick={() => {
-                    child
-                      ? history.push(`${id}/${url}/ubah/${data.id}`)
-                      : history.push(`${url}/ubah/${data.id}`);
-                  }}
-                >
-                  <BiPencil />
-                </button>
-                <button
-                  type="button"
-                  className="focus:outline-none text-white text-sm p-2 bg-red-500 rounded-r-md hover:bg-red-600 hover:shadow-lg"
-                  onClick={() => {
-                    setDeleteModal(true);
-                    setActiveItem(data.id);
-                    setNamaItem(data.nama);
-                  }}
-                >
-                  <BiTrash />
-                </button>
+                {!patient ? (
+                  <>
+                    <button
+                      type="button"
+                      className="focus:outline-none text-white text-sm p-2 bg-green-500 rounded-l-md hover:bg-green-600 hover:shadow-lg"
+                      onClick={() => {
+                        child
+                          ? history.push(`${id}/${url}/lihat/${data.id}`)
+                          : history.push(`${url}/lihat/${data.id}`);
+                      }}
+                    >
+                      <AiTwotoneEye />
+                    </button>
+                    <button
+                      type="button"
+                      className="focus:outline-none text-white text-sm p-2 bg-yellow-500 hover:bg-yellow-600 hover:shadow-lg"
+                      onClick={() => {
+                        child
+                          ? history.push(`${id}/${url}/ubah/${data.id}`)
+                          : history.push(`${url}/ubah/${data.id}`);
+                      }}
+                    >
+                      <BiPencil />
+                    </button>
+                    <button
+                      type="button"
+                      className="focus:outline-none text-white text-sm p-2 bg-red-500 rounded-r-md hover:bg-red-600 hover:shadow-lg"
+                      onClick={() => {
+                        setDeleteModal(true);
+                        setActiveItem(data.id);
+                        setNamaItem(data.nama);
+                      }}
+                    >
+                      <BiTrash />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      disabled
+                      className="focus:outline-none text-white text-sm p-2 bg-yellow-500 hover:bg-yellow-600 hover:shadow-lg rounded-md cursor-not-allowed"
+                      onClick={() => {
+                        child
+                          ? history.push(`${id}/${url}/ubah/${data.id}`)
+                          : history.push(`${url}/ubah/${data.id}`);
+                      }}
+                    >
+                      <BiPencil />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </td>

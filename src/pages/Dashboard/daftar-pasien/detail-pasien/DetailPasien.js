@@ -169,6 +169,7 @@ const DetailPasien = (props) => {
               </div>
             </div>
           </div>
+
           <FormInput
             label="Alamat"
             name="alamat"
@@ -203,14 +204,35 @@ const DetailPasien = (props) => {
             defaultValue={data !== undefined && data.nama_wali}
             disabled={disabled}
           />
-          <FormInput
+          {/* <FormInput
             label="Jenis Kelamin"
             name="jenis_kelamin_wali"
             type="text"
             onChange={handleChange}
             defaultValue={data !== undefined && data.jenis_kelamin_wali}
             disabled={disabled}
-          />
+          /> */}
+          <div className="mb-6">
+            <div className="text-gray-900 md:flex md:items-center">
+              <div className="mb-1 md:mb-0 md:w-1/3">
+                <label htmlFor="nama">Jenis Kelamin</label>
+              </div>
+              <div className={"md:flex-grow md:w-2/3"}>
+                <select
+                  className="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline"
+                  name="jenis_kelamin_wali"
+                  autoComplete="off"
+                  required
+                  defaultValue={data !== undefined && data.jenis_kelamin_wali}
+                  onChange={handleChange}
+                >
+                  <option value=""></option>
+                  <option value="L">Laki-Laki</option>
+                  <option value="P">Perempuan</option>
+                </select>
+              </div>
+            </div>
+          </div>
           <FormInput
             label="Nomor Telp Wali"
             name="no_telp_wali"

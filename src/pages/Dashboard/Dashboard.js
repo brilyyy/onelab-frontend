@@ -90,11 +90,6 @@ const Dashboard = () => {
                       title="Registrasi Pasien"
                       onClick={() => setOpen(!open)}
                     />
-                    <SidebarLink
-                      to="/hasil-pemeriksaan"
-                      title="Hasil Pemeriksaan"
-                      onClick={() => setOpen(!open)}
-                    />
                   </>
                 )}
                 {username === "Registrasi" && (

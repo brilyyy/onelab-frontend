@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getData } from "@/utils/StorageServices";
 
-const uri = "http://onelab-backend.test/api";
+const uri = " https://416c16429a7c.ngrok.io/api";
 
 const authLogin = (data) => {
   return new Promise((resolve, reject) => {

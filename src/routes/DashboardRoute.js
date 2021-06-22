@@ -95,13 +95,18 @@ const DashboardRoute = ({ name, ...props }) => {
             />
             <Route
               exact
-              path="/hasil-pemeriksaan/hasil/:id"
+              path="/hasil-pemeriksaan/:id/hasil/"
               component={Hasil}
             />
             <Route
               exact
-              path="/hasil-pemeriksaan/selesai/:id"
+              path="/hasil-pemeriksaan/:id/selesai"
               component={Selesai}
+            />
+            <Route
+              exact
+              path="/hasil-pemeriksaan/:id/cetak"
+              component={CetakHasil}
             />
             <Route exact path="/daftar-pasien" component={DaftarPasien} />
             <Route
